@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NZTA Class 1 Theory Practice — Drive the Test</title>
+<meta name="description" content="Practice NZTA Class 1 car driving theory test questions. Instant marking, full explanations, road-code accurate." />
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        asphalt:   '#1a2e23',
+        'asphalt-2':'#21392c',
+        highway:   '#0f5132',
+        'highway-light': '#1d7a4c',
+        amber:     '#fbbf24',
+        'amber-dark': '#d97706',
+        cream:     '#fdfbf6',
+        paper:     '#ffffff',
+        ink:       '#1c2620',
+        slate:     '#5b6b62',
+        'slate-2': '#8a958d',
+        rim:       '#e3e7e1',
+        ok:        '#0f7a44',
+        'ok-bg':   '#e8f6ee',
+        err:       '#c0392b',
+        'err-bg':  '#fdecea',
+      },
+      fontFamily: {
+        display: ['"Space Grotesk"', 'system-ui', 'sans-serif'],
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        mono: ['"DM Mono"', 'monospace'],
+      },
+    }
+  }
+}
+</script>
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: #fdfbf6;
+    color: #1c2620;
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #cdd6c9; border-radius: 10px; }
+
+  /* ── Road-marking dashed divider ─────────────── */
+  .road-dash {
+    background-image: repeating-linear-gradient(to right, #fbbf24 0, #fbbf24 18px, transparent 18px, transparent 32px);
+    height: 3px;
+  }
+
+  /* ── Odometer progress strip ──────────────────── */
+  .odometer-track {
+    position: relative;
+    height: 10px;
+    background: #21392c;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .odometer-fill {
+    position: absolute;
+    inset: 0;
+    width: 0%;
+    background: linear-gradient(90deg, #1d7a4c, #fbbf24);
+    border-radius: 999px;
+    transition: width 0.45s cubic-bezier(0.4,0,0.2,1);
+  }
+  .odometer-fill::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: repeating-linear-gradient(to right, rgba(255,255,255,0.35) 0, rgba(255,255,255,0.35) 2px, transparent 2px, transparent 14px);
+  }
+  .odometer-car {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    transition: left 0.45s cubic-bezier(0.4,0,0.2,1);
+    font-size: 16px;
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
+  }
+
+  /* ── Option button ─────────────────────────────── */
+  .opt-btn {
+    display: flex; align-items: flex-start; gap: 12px;
+    width: 100%;
+    text-align: left;
+    padding: 14px 16px;
+    border-radius: 12px;
+    border: 1.5px solid #e3e7e1;
+    background: #ffffff;
+    transition: border-color 0.15s, background 0.15s, transform 0.1s;
+    cursor: pointer;
+  }
+  .opt-btn:hover:not(.locked) { border-color: #1d7a4c; background: #f3f9f5; }
+  .opt-btn:active:not(.locked) { transform: scale(0.99); }
+  .opt-btn.selected { border-color: #0f5132; background: #e8f6ee; box-shadow: 0 0 0 3px rgba(15,81,50,0.08); }
+  .opt-btn.correct-reveal { border-color: #0f7a44; background: #e8f6ee; }
+  .opt-btn.incorrect-reveal { border-color: #c0392b; background: #fdecea; }
+  .opt-btn.locked { cursor: default; }
+  .opt-btn.dimmed { opacity: 0.55; }
+
+  .opt-letter {
+    flex-shrink: 0;
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 13px; font-weight: 500;
+    background: #f1f4f0;
+    color: #5b6b62;
+    border: 1px solid #e3e7e1;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+  }
+  .opt-btn.selected .opt-letter { background: #0f5132; color: #fff; border-color: #0f5132; }
+  .opt-btn.correct-reveal .opt-letter { background: #0f7a44; color: #fff; border-color: #0f7a44; }
+  .opt-btn.incorrect-reveal .opt-letter { background: #c0392b; color: #fff; border-color: #c0392b; }
+
+  /* ── True/False buttons ────────────────────────── */
+  .tf-btn {
+    flex: 1;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    padding: 18px;
+    border-radius: 14px;
+    border: 1.5px solid #e3e7e1;
+    background: #ffffff;
+    font-weight: 600;
+    font-size: 15px;
+    transition: border-color 0.15s, background 0.15s, transform 0.1s;
+    cursor: pointer;
+  }
+  .tf-btn:hover:not(.locked) { border-color: #1d7a4c; background: #f3f9f5; }
+  .tf-btn:active:not(.locked) { transform: scale(0.98); }
+  .tf-btn.selected { border-color: #0f5132; background: #e8f6ee; box-shadow: 0 0 0 3px rgba(15,81,50,0.08); }
+  .tf-btn.correct-reveal { border-color: #0f7a44; background: #e8f6ee; color: #0f7a44; }
+  .tf-btn.incorrect-reveal { border-color: #c0392b; background: #fdecea; color: #c0392b; }
+  .tf-btn.locked { cursor: default; }
+  .tf-btn.dimmed { opacity: 0.55; }
+
+  /* ── Buttons ────────────────────────────────────── */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px; font-weight: 600;
+    padding: 12px 26px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.16s, transform 0.12s, box-shadow 0.16s, opacity 0.16s;
+    white-space: nowrap;
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn:disabled:active { transform: none; }
+  .btn-primary { background: #0f5132; color: #fff; box-shadow: 0 2px 10px rgba(15,81,50,0.28); }
+  .btn-primary:not(:disabled):hover { background: #0c3f27; box-shadow: 0 4px 16px rgba(15,81,50,0.35); }
+  .btn-amber { background: #fbbf24; color: #1c2620; box-shadow: 0 2px 10px rgba(251,191,36,0.35); }
+  .btn-amber:not(:disabled):hover { background: #f2b30f; }
+  .btn-outline { background: transparent; color: #0f5132; border: 1.5px solid #0f5132; }
+  .btn-outline:not(:disabled):hover { background: #e8f6ee; }
+  .btn-ghost { background: transparent; color: #5b6b62; }
+  .btn-ghost:hover { background: #f1f4f0; color: #1c2620; }
+
+  /* ── Card hover ─────────────────────────────────── */
+  .topic-card { transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s; }
+  .topic-card:hover { box-shadow: 0 8px 24px rgba(15,81,50,0.10); transform: translateY(-2px); border-color: #1d7a4c; }
+
+  /* ── Fade transitions ───────────────────────────── */
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+  .fade-up { animation: fadeUp 0.35s ease both; }
+  @keyframes popIn { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: scale(1); } }
+  .pop-in { animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both; }
+
+  /* ── Speedometer ring (results page) ───────────── */
+  .gauge-ring { transform: rotate(-90deg); transform-origin: center; }
+  .gauge-fill { transition: stroke-dashoffset 1s cubic-bezier(0.4,0,0.2,1); }
+
+  /* ── Sign badge ─────────────────────────────────── */
+  .sign-badge {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+
+  /* ── Mobile nav ─────────────────────────────────── */
+  #mobile-menu { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+  #mobile-menu.open { max-height: 260px; }
+
+  /* ── Keyboard focus ─────────────────────────────── */
+  button:focus-visible, a:focus-visible, input:focus-visible {
+    outline: 3px solid rgba(15,81,50,0.35);
+    outline-offset: 2px;
+  }
+
+  /* ── Reduced motion ─────────────────────────────── */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+
+  /* ── View management ────────────────────────────── */
+  .view { display: none; }
+  .view.active { display: block; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════
+     NAV
+═══════════════════════════════════ -->
+<header class="sticky top-0 z-50 bg-cream/92 backdrop-blur-md border-b border-rim">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-14">
+      <a href="#" id="logo-home" class="flex items-center gap-2.5 group">
+        <div class="w-8 h-8 rounded-lg bg-highway flex items-center justify-center shadow-sm group-hover:bg-highway-light transition-colors">
+          <svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <path d="M10 3l6 14H4L10 3z" fill="#fbbf24"/>
+            <rect x="9" y="9" width="2" height="4" fill="#1a2e23"/>
+            <rect x="9" y="14" width="2" height="1.5" fill="#1a2e23"/>
+          </svg>
+        </div>
+        <span class="font-display font-bold text-ink text-[15px] tracking-tight">Drive<span class="text-highway">Theory</span></span>
+      </a>
+
+      <nav class="hidden md:flex items-center gap-7" aria-label="Main navigation">
+        <a href="#" class="text-sm font-medium text-slate hover:text-highway transition-colors" id="nav-home">Home</a>
+        <a href="#" class="text-sm font-medium text-slate hover:text-highway transition-colors" id="nav-topics">Topics</a>
+        <a href="#" class="text-sm font-medium text-slate hover:text-highway transition-colors" id="nav-about">About</a>
+      </nav>
+
+      <button id="nav-toggle" class="md:hidden p-2 rounded-lg text-slate hover:bg-rim transition-colors" aria-label="Toggle menu" aria-expanded="false">
+        <svg id="icon-menu" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        <svg id="icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="hidden"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <div id="mobile-menu">
+      <div class="py-3 border-t border-rim flex flex-col gap-0.5">
+        <a href="#" class="px-3 py-2.5 text-sm font-medium text-slate hover:bg-rim rounded-lg transition-colors" id="m-nav-home">Home</a>
+        <a href="#" class="px-3 py-2.5 text-sm font-medium text-slate hover:bg-rim rounded-lg transition-colors" id="m-nav-topics">Topics</a>
+        <a href="#" class="px-3 py-2.5 text-sm font-medium text-slate hover:bg-rim rounded-lg transition-colors" id="m-nav-about">About</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     VIEW 1 — HOME / START SCREEN
+═══════════════════════════════════════════════════════════ -->
+<main id="view-home" class="view active">
+
+  <section class="pt-14 pb-10 px-4 sm:px-6 lg:px-8 text-center">
+    <div class="max-w-2xl mx-auto">
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-highway/25 bg-highway/8 text-highway text-xs font-semibold uppercase tracking-widest mb-6">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor" aria-hidden="true"><circle cx="5" cy="5" r="5"/></svg>
+        NZTA Class 1 · Road Code Aligned
+      </div>
+
+      <h1 class="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-ink leading-tight tracking-tight mb-4">
+        Learn the road<br/><span class="text-highway">before you're on it.</span>
+      </h1>
+
+      <p class="text-slate text-base sm:text-lg leading-relaxed max-w-xl mx-auto mb-8">
+        Practice real NZTA Class 1 theory questions with instant marking and full explanations. Track your score, see exactly where you went wrong, and try again.
+      </p>
+
+      <div class="flex flex-wrap justify-center gap-3 mb-10">
+        <span class="inline-flex items-center gap-1.5 bg-white border border-rim rounded-full px-3 py-1.5 text-xs font-medium text-slate shadow-sm">
+          <span id="stat-total-questions" class="font-mono font-semibold text-highway">50</span> questions ready
+        </span>
+        <span class="inline-flex items-center gap-1.5 bg-white border border-rim rounded-full px-3 py-1.5 text-xs font-medium text-slate shadow-sm">
+          <span class="font-mono font-semibold text-highway">12</span> topics covered
+        </span>
+        <span class="inline-flex items-center gap-1.5 bg-white border border-rim rounded-full px-3 py-1.5 text-xs font-medium text-slate shadow-sm">
+          No sign-up needed
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+
+    <!-- Start card -->
+    <div class="bg-white rounded-2xl shadow-sm border border-rim p-6 sm:p-8 mb-10">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="sign-badge bg-amber">
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 3l6 14H4L10 3z" fill="#1a2e23"/></svg>
+        </div>
+        <div>
+          <p class="font-display font-semibold text-ink text-base">Start a practice run</p>
+          <p class="text-slate-2 text-xs">Choose how many questions, then go.</p>
+        </div>
+      </div>
+
+      <!-- Length selector -->
+      <div class="grid grid-cols-3 gap-3 mb-6" role="radiogroup" aria-label="Number of questions">
+        <button class="length-btn opt-btn justify-center py-4" data-len="10">
+          <span class="font-display font-bold text-lg text-ink block">10</span>
+          <span class="text-xs text-slate-2 block mt-0.5">Quick drill</span>
+        </button>
+        <button class="length-btn opt-btn justify-center py-4 selected" data-len="35">
+          <span class="font-display font-bold text-lg text-ink block">35</span>
+          <span class="text-xs text-slate-2 block mt-0.5">Full mock test</span>
+        </button>
+        <button class="length-btn opt-btn justify-center py-4" data-len="all">
+          <span class="font-display font-bold text-lg text-ink block">All</span>
+          <span class="text-xs text-slate-2 block mt-0.5">Whole bank</span>
+        </button>
+      </div>
+
+      <div class="flex items-center justify-between text-xs text-slate-2 mb-6 px-1">
+        <span>Real test format: 35 questions, need 32 correct to pass</span>
+      </div>
+
+      <button id="btn-start" class="btn btn-primary w-full text-base py-3.5">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+        Start Practice Test
+      </button>
+    </div>
+
+    <!-- Topics grid -->
+    <div id="topics-section">
+      <div class="flex items-center gap-3 mb-5">
+        <h2 class="font-display font-bold text-ink text-lg">Browse by topic</h2>
+        <div class="flex-1 road-dash"></div>
+      </div>
+      <div id="topics-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+    </div>
+
+  </div>
+</main>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     VIEW 2 — QUIZ IN PROGRESS
+═══════════════════════════════════════════════════════════ -->
+<main id="view-quiz" class="view">
+  <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- Odometer progress -->
+    <div class="mb-2 flex items-center justify-between text-xs">
+      <span class="font-mono text-slate font-medium">Question <span id="q-current">1</span> / <span id="q-total">35</span></span>
+      <span class="font-mono text-highway font-semibold" id="q-score-live">0 correct</span>
+    </div>
+    <div class="odometer-track mb-1">
+      <div class="odometer-fill" id="odometer-fill"></div>
+    </div>
+    <div class="relative h-5 mb-8">
+      <span class="odometer-car" id="odometer-car" style="left:0%">🚗</span>
+    </div>
+
+    <!-- Question card -->
+    <div class="bg-white rounded-2xl shadow-sm border border-rim p-6 sm:p-7" id="question-card">
+      <div class="flex items-center gap-2 mb-4">
+        <span class="text-xs font-mono font-medium text-amber-dark bg-amber/15 border border-amber/30 rounded-full px-3 py-1" id="q-topic-badge">Topic</span>
+        <span class="text-xs font-mono font-medium text-slate-2" id="q-type-badge">Single choice</span>
+      </div>
+
+      <h2 class="font-display font-semibold text-ink text-lg sm:text-xl leading-snug mb-6" id="q-text">Question text goes here</h2>
+
+      <!-- Single choice options container -->
+      <div id="q-options-single" class="flex flex-col gap-2.5"></div>
+
+      <!-- True/False container -->
+      <div id="q-options-judge" class="hidden flex gap-3">
+        <button class="tf-btn" data-val="true">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><circle cx="9" cy="9" r="7.5" stroke="currentColor" stroke-width="1.6"/><path d="M5.5 9l2.3 2.3L13 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          True
+        </button>
+        <button class="tf-btn" data-val="false">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><circle cx="9" cy="9" r="7.5" stroke="currentColor" stroke-width="1.6"/><path d="M6.5 6.5l5 5M11.5 6.5l-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          False
+        </button>
+      </div>
+
+      <!-- Explanation panel (revealed after answering) -->
+      <div id="explanation-panel" class="hidden mt-5 pt-5 border-t border-rim fade-up">
+        <div class="flex items-start gap-3 rounded-xl p-4" id="explanation-box">
+          <div id="explanation-icon" class="flex-shrink-0 mt-0.5"></div>
+          <div>
+            <p class="font-semibold text-sm mb-1" id="explanation-title"></p>
+            <p class="text-sm leading-relaxed text-slate" id="explanation-text"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="flex items-center justify-between mt-6">
+      <button id="btn-quit" class="btn btn-ghost text-sm">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 2H3a1 1 0 00-1 1v10a1 1 0 001 1h3M11 11l3-3-3-3M14 8H6"/></svg>
+        End test
+      </button>
+      <button id="btn-next" class="btn btn-amber" disabled>
+        Next question
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="#1c2620" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+      </button>
+    </div>
+  </div>
+</main>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     VIEW 3 — RESULTS DASHBOARD
+═══════════════════════════════════════════════════════════ -->
+<main id="view-results" class="view">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+    <div class="text-center mb-8 pop-in">
+      <div id="result-badge" class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-widest mb-5">
+      </div>
+      <h1 class="font-display text-3xl sm:text-4xl font-bold text-ink mb-2" id="result-headline">Test complete</h1>
+      <p class="text-slate text-sm" id="result-sub">Here's how you went.</p>
+    </div>
+
+    <!-- Score dashboard -->
+    <div class="bg-white rounded-2xl shadow-sm border border-rim p-6 sm:p-8 mb-8 grid sm:grid-cols-[auto,1fr] gap-8 items-center">
+
+      <!-- Gauge -->
+      <div class="flex flex-col items-center">
+        <svg width="160" height="160" viewBox="0 0 160 160" class="gauge-ring">
+          <circle cx="80" cy="80" r="68" fill="none" stroke="#e3e7e1" stroke-width="14"/>
+          <circle cx="80" cy="80" r="68" fill="none" stroke="#0f5132" stroke-width="14" stroke-linecap="round"
+            stroke-dasharray="427" stroke-dashoffset="427" id="gauge-fill" class="gauge-fill"/>
+        </svg>
+        <div class="-mt-[104px] text-center">
+          <p class="font-display text-3xl font-bold text-ink" id="gauge-pct">0%</p>
+          <p class="text-xs text-slate-2 font-medium mt-1">Correct</p>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="grid grid-cols-2 gap-4 w-full">
+        <div class="bg-cream rounded-xl p-4 border border-rim">
+          <p class="font-display text-2xl font-bold text-ok" id="stat-correct">0</p>
+          <p class="text-xs text-slate-2 mt-1">Correct answers</p>
+        </div>
+        <div class="bg-cream rounded-xl p-4 border border-rim">
+          <p class="font-display text-2xl font-bold text-err" id="stat-incorrect">0</p>
+          <p class="text-xs text-slate-2 mt-1">Incorrect answers</p>
+        </div>
+        <div class="bg-cream rounded-xl p-4 border border-rim">
+          <p class="font-display text-2xl font-bold text-ink" id="stat-total">0</p>
+          <p class="text-xs text-slate-2 mt-1">Total questions</p>
+        </div>
+        <div class="bg-cream rounded-xl p-4 border border-rim">
+          <p class="font-display text-2xl font-bold text-ink" id="stat-time">0:00</p>
+          <p class="text-xs text-slate-2 mt-1">Time taken</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Topic breakdown -->
+    <div class="bg-white rounded-2xl shadow-sm border border-rim p-6 sm:p-7 mb-8">
+      <h2 class="font-display font-semibold text-ink text-base mb-4">Performance by topic</h2>
+      <div id="topic-breakdown" class="flex flex-col gap-3"></div>
+    </div>
+
+    <!-- Review list -->
+    <div class="bg-white rounded-2xl shadow-sm border border-rim p-6 sm:p-7 mb-8">
+      <h2 class="font-display font-semibold text-ink text-base mb-4">Review your answers</h2>
+      <div id="review-list" class="flex flex-col gap-3"></div>
+    </div>
+
+    <!-- Actions -->
+    <div class="flex flex-col sm:flex-row gap-3">
+      <button id="btn-retry-wrong" class="btn btn-outline flex-1">
+        Retry incorrect questions
+      </button>
+      <button id="btn-restart" class="btn btn-primary flex-1">
+        Start a new test
+      </button>
+    </div>
+  </div>
+</main>
+
+
+<!-- ═══════════════════════════════════
+     FOOTER
+═══════════════════════════════════ -->
+<footer class="bg-white border-t border-rim mt-auto">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2.5">
+        <div class="w-7 h-7 rounded-lg bg-highway flex items-center justify-center">
+          <svg width="14" height="14" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 3l6 14H4L10 3z" fill="#fbbf24"/></svg>
+        </div>
+        <span class="font-display font-bold text-ink text-sm">Drive<span class="text-highway">Theory</span></span>
+      </div>
+      <p class="text-xs text-slate-2 text-center max-w-md">
+        Practice questions only — not an official NZTA product. Always refer to the current Official New Zealand Road Code for definitive rules.
+      </p>
+      <p class="text-xs text-slate-2">&copy; <span id="year"></span> DriveTheory</p>
+    </div>
+  </div>
+</footer>
+
+<!-- Question bank data -->
+<script src="questions.js"></script>
+
+<!-- ═══════════════════════════════════
+     APPLICATION LOGIC
+═══════════════════════════════════ -->
+<script>
+(function () {
+  'use strict';
+
+  const $ = id => document.getElementById(id);
+  $('year').textContent = new Date().getFullYear();
+
+  /* ════════════════════════════════════
+     MOBILE NAV
+  ════════════════════════════════════ */
+  const navToggle = $('nav-toggle');
+  const mobileMenu = $('mobile-menu');
+  navToggle.addEventListener('click', () => {
+    const open = mobileMenu.classList.toggle('open');
+    navToggle.setAttribute('aria-expanded', open);
+    $('icon-menu').classList.toggle('hidden', open);
+    $('icon-close').classList.toggle('hidden', !open);
+  });
+  function closeMobileMenu() {
+    mobileMenu.classList.remove('open');
+    navToggle.setAttribute('aria-expanded', 'false');
+    $('icon-menu').classList.remove('hidden');
+    $('icon-close').classList.add('hidden');
+  }
+
+  /* ════════════════════════════════════
+     VIEW SWITCHING
+  ════════════════════════════════════ */
+  function showView(name) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    $('view-' + name).classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  /* ════════════════════════════════════
+     STATE
+  ════════════════════════════════════ */
+  let session = {
+    questions: [],     // active question set for this run
+    index: 0,           // current question index
+    answers: [],         // { question, given, correct }
+    startTime: null,
+    selectedLength: 35,
+    filterTopic: null,  // if set, only this topic
+  };
+
+  /* ════════════════════════════════════
+     HOME VIEW — length selector
+  ════════════════════════════════════ */
+  $('stat-total-questions').textContent = QUESTION_BANK.length;
+
+  document.querySelectorAll('.length-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.length-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      session.selectedLength = btn.dataset.len;
+    });
+  });
+
+  $('btn-start').addEventListener('click', () => {
+    session.filterTopic = null;
+    startQuiz(session.selectedLength);
+  });
+
+  /* ════════════════════════════════════
+     TOPICS GRID
+  ════════════════════════════════════ */
+  function getTopics() {
+    const map = {};
+    QUESTION_BANK.forEach(q => {
+      map[q.topic] = (map[q.topic] || 0) + 1;
+    });
+    return map;
+  }
+
+  const TOPIC_ICONS = {
+    "Roundabout Priority": "🔄",
+    "Road Signs": "🚸",
+    "Speed Limits": "⏱️",
+    "Drink Driving Laws": "🚫",
+    "Child Car Restraints": "🧒",
+    "Motorway Emergency Procedures": "🚧",
+    "Bad Weather Driving": "🌧️",
+    "Crash Response": "🆘",
+    "Pedestrian & Cyclist Right of Way": "🚶",
+    "Penalty Rules": "📋",
+    "Night Driving": "🌙",
+    "Vehicle WOF Standards": "🔧",
+  };
+
+  function renderTopics() {
+    const topics = getTopics();
+    const grid = $('topics-grid');
+    grid.innerHTML = '';
+    Object.keys(topics).sort().forEach(topic => {
+      const card = document.createElement('button');
+      card.className = 'topic-card bg-white rounded-xl border border-rim p-4 text-left shadow-sm flex items-center gap-3';
+      card.innerHTML = `
+        <span class="text-2xl flex-shrink-0">${TOPIC_ICONS[topic] || '📘'}</span>
+        <span class="flex-1 min-w-0">
+          <span class="block font-semibold text-ink text-sm truncate">${topic}</span>
+          <span class="block text-xs text-slate-2 mt-0.5">${topics[topic]} question${topics[topic] === 1 ? '' : 's'}</span>
+        </span>
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="text-slate-2 flex-shrink-0" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg>
+      `;
+      card.addEventListener('click', () => {
+        session.filterTopic = topic;
+        startQuiz('all');
+      });
+      grid.appendChild(card);
+    });
+  }
+  renderTopics();
+
+  /* ════════════════════════════════════
+     SHUFFLE HELPER
+  ════════════════════════════════════ */
+  function shuffle(arr) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  /* ════════════════════════════════════
+     START QUIZ
+  ════════════════════════════════════ */
+  function startQuiz(length, customSet) {
+    let pool = customSet || QUESTION_BANK;
+    if (session.filterTopic) {
+      pool = pool.filter(q => q.topic === session.filterTopic);
+    }
+    pool = shuffle(pool);
+
+    if (length !== 'all' && !customSet) {
+      pool = pool.slice(0, Math.min(parseInt(length), pool.length));
+    }
+
+    session.questions = pool;
+    session.index = 0;
+    session.answers = [];
+    session.startTime = Date.now();
+
+    $('q-total').textContent = session.questions.length;
+    showView('quiz');
+    renderQuestion();
+  }
+
+  /* ════════════════════════════════════
+     RENDER QUESTION
+  ════════════════════════════════════ */
+  let currentLocked = false;
+  let currentSelection = null;
+
+  function renderQuestion() {
+    currentLocked = false;
+    currentSelection = null;
+
+    const q = session.questions[session.index];
+    const total = session.questions.length;
+    const i = session.index;
+
+    // Progress
+    $('q-current').textContent = i + 1;
+    const pct = (i / total) * 100;
+    $('odometer-fill').style.width = pct + '%';
+    $('odometer-car').style.left = `calc(${pct}% )`;
+    const correctSoFar = session.answers.filter(a => a.correct).length;
+    $('q-score-live').textContent = `${correctSoFar} correct`;
+
+    // Question text
+    $('q-topic-badge').textContent = q.topic;
+    $('q-type-badge').textContent = q.type === 'single' ? 'Single choice' : 'True / False';
+    $('q-text').textContent = q.question;
+
+    // Hide explanation
+    $('explanation-panel').classList.add('hidden');
+    $('btn-next').disabled = true;
+    $('btn-next').textContent = (i === total - 1) ? 'See results' : 'Next question';
+    // restore icon on next button text node (re-set innerHTML safely)
+    $('btn-next').innerHTML = (i === total - 1)
+      ? 'See results <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="#1c2620" stroke-width="2" stroke-linecap="round" aria-hidden="true" style="margin-left:6px"><path d="M3 8h10M9 4l4 4-4 4"/></svg>'
+      : 'Next question <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="#1c2620" stroke-width="2" stroke-linecap="round" aria-hidden="true" style="margin-left:6px"><path d="M3 8h10M9 4l4 4-4 4"/></svg>';
+
+    const singleBox = $('q-options-single');
+    const judgeBox = $('q-options-judge');
+
+    if (q.type === 'single') {
+      singleBox.classList.remove('hidden');
+      judgeBox.classList.add('hidden');
+      singleBox.innerHTML = '';
+      const letters = ['A', 'B', 'C', 'D'];
+      q.options.forEach((opt, idx) => {
+        const letter = letters[idx];
+        const btn = document.createElement('button');
+        btn.className = 'opt-btn';
+        btn.dataset.letter = letter;
+        btn.innerHTML = `<span class="opt-letter">${letter}</span><span class="pt-0.5">${opt}</span>`;
+        btn.addEventListener('click', () => selectAnswer(letter));
+        singleBox.appendChild(btn);
+      });
+    } else {
+      singleBox.classList.add('hidden');
+      judgeBox.classList.remove('hidden');
+      judgeBox.querySelectorAll('.tf-btn').forEach(btn => {
+        btn.classList.remove('selected', 'correct-reveal', 'incorrect-reveal', 'locked', 'dimmed');
+        btn.onclick = () => selectAnswer(btn.dataset.val === 'true');
+      });
+    }
+  }
+
+  /* ════════════════════════════════════
+     SELECT ANSWER
+  ════════════════════════════════════ */
+  function selectAnswer(value) {
+    if (currentLocked) return;
+    currentLocked = true;
+    currentSelection = value;
+
+    const q = session.questions[session.index];
+    const isCorrect = (q.type === 'single')
+      ? value === q.answer
+      : value === q.answer;
+
+    session.answers.push({ question: q, given: value, correct: isCorrect });
+
+    // Visual feedback
+    if (q.type === 'single') {
+      document.querySelectorAll('#q-options-single .opt-btn').forEach(btn => {
+        btn.classList.add('locked');
+        const letter = btn.dataset.letter;
+        if (letter === q.answer) {
+          btn.classList.add('correct-reveal');
+        } else if (letter === value) {
+          btn.classList.add('incorrect-reveal');
+        } else {
+          btn.classList.add('dimmed');
+        }
+      });
+    } else {
+      document.querySelectorAll('#q-options-judge .tf-btn').forEach(btn => {
+        btn.classList.add('locked');
+        const btnVal = btn.dataset.val === 'true';
+        if (btnVal === q.answer) {
+          btn.classList.add('correct-reveal');
+        } else if (btnVal === value) {
+          btn.classList.add('incorrect-reveal');
+        } else {
+          btn.classList.add('dimmed');
+        }
+      });
+    }
+
+    // Explanation panel
+    const panel = $('explanation-panel');
+    const box = $('explanation-box');
+    const icon = $('explanation-icon');
+    const title = $('explanation-title');
+    const text = $('explanation-text');
+
+    box.className = 'flex items-start gap-3 rounded-xl p-4 ' + (isCorrect ? 'bg-ok-bg' : 'bg-err-bg');
+    title.className = 'font-semibold text-sm mb-1 ' + (isCorrect ? 'text-ok' : 'text-err');
+
+    if (isCorrect) {
+      icon.innerHTML = `<svg width="18" height="18" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#0f7a44"/><path d="M4.5 8l2.5 2.5 4.5-4.5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+      title.textContent = 'Correct';
+    } else {
+      icon.innerHTML = `<svg width="18" height="18" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#c0392b"/><path d="M8 4.5v4M8 10.5v1" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>`;
+      const correctLabel = q.type === 'single' ? q.answer : (q.answer ? 'True' : 'False');
+      title.textContent = `Incorrect — correct answer is ${correctLabel}`;
+    }
+    text.textContent = q.analysis;
+    panel.classList.remove('hidden');
+
+    $('btn-next').disabled = false;
+
+    // live score update
+    const correctSoFar = session.answers.filter(a => a.correct).length;
+    $('q-score-live').textContent = `${correctSoFar} correct`;
+  }
+
+  /* ════════════════════════════════════
+     NEXT / END
+  ════════════════════════════════════ */
+  $('btn-next').addEventListener('click', () => {
+    if (session.index < session.questions.length - 1) {
+      session.index++;
+      renderQuestion();
+    } else {
+      finishQuiz();
+    }
+  });
+
+  $('btn-quit').addEventListener('click', () => {
+    if (session.answers.length === 0) {
+      showView('home');
+      return;
+    }
+    if (confirm('End this test now? Your progress so far will be scored.')) {
+      finishQuiz();
+    }
+  });
+
+  /* ════════════════════════════════════
+     FINISH QUIZ → RESULTS
+  ════════════════════════════════════ */
+  function finishQuiz() {
+    const total = session.answers.length;
+    const correct = session.answers.filter(a => a.correct).length;
+    const incorrect = total - correct;
+    const pct = total > 0 ? Math.round((correct / total) * 100) : 0;
+    const elapsedSec = Math.round((Date.now() - session.startTime) / 1000);
+    const mins = Math.floor(elapsedSec / 60);
+    const secs = elapsedSec % 60;
+
+    // Pass threshold mirrors the real test: 32/35 ≈ 91.4%
+    const passThreshold = 91;
+    const passed = pct >= passThreshold;
+
+    // Badge + headline
+    const badge = $('result-badge');
+    if (passed) {
+      badge.className = 'inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-widest mb-5 bg-ok-bg text-ok';
+      badge.textContent = '✓ Pass standard reached';
+      $('result-headline').textContent = 'Nice driving.';
+      $('result-sub').textContent = `You scored ${pct}% — at or above the real test's 32/35 pass mark.`;
+    } else {
+      badge.className = 'inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-widest mb-5 bg-err-bg text-err';
+      badge.textContent = 'Below pass standard';
+      $('result-headline').textContent = 'Good practice run.';
+      $('result-sub').textContent = `You scored ${pct}% — the real test requires roughly 91% (32/35) to pass.`;
+    }
+
+    // Gauge
+    const circumference = 427; // 2 * PI * 68
+    const offset = circumference - (circumference * pct / 100);
+    requestAnimationFrame(() => {
+      $('gauge-fill').style.strokeDashoffset = offset;
+    });
+    $('gauge-fill').setAttribute('stroke', passed ? '#0f7a44' : '#c0392b');
+    $('gauge-pct').textContent = pct + '%';
+
+    // Stats
+    $('stat-correct').textContent = correct;
+    $('stat-incorrect').textContent = incorrect;
+    $('stat-total').textContent = total;
+    $('stat-time').textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+
+    // Topic breakdown
+    const byTopic = {};
+    session.answers.forEach(a => {
+      const t = a.question.topic;
+      if (!byTopic[t]) byTopic[t] = { correct: 0, total: 0 };
+      byTopic[t].total++;
+      if (a.correct) byTopic[t].correct++;
+    });
+    const breakdownEl = $('topic-breakdown');
+    breakdownEl.innerHTML = '';
+    Object.keys(byTopic).sort().forEach(topic => {
+      const d = byTopic[topic];
+      const tpct = Math.round((d.correct / d.total) * 100);
+      const row = document.createElement('div');
+      row.innerHTML = `
+        <div class="flex items-center justify-between text-sm mb-1.5">
+          <span class="font-medium text-ink truncate pr-2">${TOPIC_ICONS[topic] || '📘'} ${topic}</span>
+          <span class="font-mono text-xs text-slate-2 flex-shrink-0">${d.correct}/${d.total}</span>
+        </div>
+        <div class="w-full h-2 bg-rim rounded-full overflow-hidden">
+          <div class="h-full rounded-full" style="width:${tpct}%; background:${tpct >= 80 ? '#0f7a44' : tpct >= 50 ? '#fbbf24' : '#c0392b'}"></div>
+        </div>
+      `;
+      breakdownEl.appendChild(row);
+    });
+
+    // Review list
+    const reviewEl = $('review-list');
+    reviewEl.innerHTML = '';
+    session.answers.forEach((a, idx) => {
+      const q = a.question;
+      const givenLabel = q.type === 'single' ? a.given : (a.given ? 'True' : 'False');
+      const correctLabel = q.type === 'single' ? q.answer : (q.answer ? 'True' : 'False');
+
+      const item = document.createElement('div');
+      item.className = 'border rounded-xl p-4 ' + (a.correct ? 'border-rim' : 'border-err/30 bg-err-bg/40');
+      item.innerHTML = `
+        <div class="flex items-start gap-3">
+          <span class="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${a.correct ? 'bg-ok-bg text-ok' : 'bg-err-bg text-err'}">${idx + 1}</span>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-medium text-ink mb-1.5">${q.question}</p>
+            <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs">
+              <span class="${a.correct ? 'text-ok' : 'text-err'} font-medium">Your answer: ${givenLabel}</span>
+              ${!a.correct ? `<span class="text-slate font-medium">Correct: ${correctLabel}</span>` : ''}
+            </div>
+            <p class="text-xs text-slate-2 mt-2 leading-relaxed">${q.analysis}</p>
+          </div>
+        </div>
+      `;
+      reviewEl.appendChild(item);
+    });
+
+    showView('results');
+  }
+
+  /* ════════════════════════════════════
+     RESULT ACTIONS
+  ════════════════════════════════════ */
+  $('btn-restart').addEventListener('click', () => {
+    session.filterTopic = null;
+    showView('home');
+  });
+
+  $('btn-retry-wrong').addEventListener('click', () => {
+    const wrongQs = session.answers.filter(a => !a.correct).map(a => a.question);
+    if (wrongQs.length === 0) {
+      alert('No incorrect answers to retry — great work!');
+      return;
+    }
+    session.filterTopic = null;
+    startQuiz('all', wrongQs);
+  });
+
+  /* ════════════════════════════════════
+     NAV LINKS
+  ════════════════════════════════════ */
+  function goHome(e) { e.preventDefault(); closeMobileMenu(); showView('home'); }
+  function goTopics(e) {
+    e.preventDefault();
+    closeMobileMenu();
+    showView('home');
+    document.getElementById('topics-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  $('logo-home').addEventListener('click', goHome);
+  $('nav-home').addEventListener('click', goHome);
+  $('m-nav-home').addEventListener('click', goHome);
+  $('nav-topics').addEventListener('click', goTopics);
+  $('m-nav-topics').addEventListener('click', goTopics);
+  $('nav-about').addEventListener('click', e => { e.preventDefault(); closeMobileMenu(); alert('DriveTheory is a free practice tool for the NZTA Class 1 driving theory test. Questions are written to align with the Official New Zealand Road Code but this is not an official NZTA product.'); });
+  $('m-nav-about').addEventListener('click', e => { e.preventDefault(); closeMobileMenu(); alert('DriveTheory is a free practice tool for the NZTA Class 1 driving theory test. Questions are written to align with the Official New Zealand Road Code but this is not an official NZTA product.'); });
+
+})();
+</script>
+</body>
+</html>
